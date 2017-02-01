@@ -60,6 +60,7 @@ public class SaveRestoreBase extends RegressionSuite {
         DefaultSnapshotDataTarget.m_simulateFullDiskWritingChunk = false;
         DefaultSnapshotDataTarget.m_simulateFullDiskWritingHeader = false;
         org.voltdb.sysprocs.SnapshotRegistry.clear();
+        m_completeShutdown = true;
     }
 
     @Override

@@ -64,6 +64,12 @@ public class StatisticsTestSuiteBase extends SaveRestoreBase {
         super(name);
     }
 
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        m_completeShutdown = true;
+    }
+
     private String claimRecentAnalysis() {
         String result = "No root cause analysis is available for this failure.";
         if (m_recentAnalysis != null) {

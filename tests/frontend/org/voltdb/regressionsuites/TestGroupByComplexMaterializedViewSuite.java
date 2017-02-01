@@ -1697,14 +1697,14 @@ public class TestGroupByComplexMaterializedViewSuite extends RegressionSuite {
         config = new LocalCluster("plansgroupby-onesite.jar", 1, 1, 0, BackendTarget.NATIVE_EE_JNI);
         success = config.compile(project);
         assertTrue(success);
-        builder.addServerConfig(config);
+        builder.addServerConfig(config, false);
         // End single-server configuration  -- please do not remove or corrupt this structured comment */
 
         //* HSQL backend server configuration  -- please do not remove or corrupt this structured comment
         config = new LocalCluster("plansgroupby-hsql.jar", 1, 1, 0, BackendTarget.HSQLDB_BACKEND);
         success = config.compile(project);
         assertTrue(success);
-        builder.addServerConfig(config);
+        builder.addServerConfig(config, false);
         // End HSQL backend server configuration  -- please do not remove or corrupt this structured comment */
 
         //* Multi-server configuration  -- please do not remove or corrupt this structured comment
@@ -1714,7 +1714,7 @@ public class TestGroupByComplexMaterializedViewSuite extends RegressionSuite {
         config.setHasLocalServer(false);
         success = config.compile(project);
         assertTrue(success);
-        builder.addServerConfig(config);
+        builder.addServerConfig(config, false);
         // End multi-server configuration  -- please do not remove or corrupt this structured comment */
 
         return builder;

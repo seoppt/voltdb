@@ -388,7 +388,7 @@ public class TestImportSuite extends RegressionSuite {
         config.setHasLocalServer(false);
         boolean compile = config.compile(project);
         assertTrue(compile);
-        builder.addServerConfig(config);
+        builder.addServerConfig(config, false);
 
         return builder;
     }
