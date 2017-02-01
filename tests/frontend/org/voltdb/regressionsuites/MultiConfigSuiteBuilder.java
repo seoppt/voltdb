@@ -80,13 +80,18 @@ public class MultiConfigSuiteBuilder extends TestSuite {
         m_testClass = testClass;
     }
 
+    public boolean addServerConfig(VoltServerConfig config) {
+        return addServerConfig(config, true);
+    }
+
     /**
      * Add a sever configuration to the set of configurations we want these
      * tests to run on.
      *
      * @param config A Server Configuration to run this set of tests on.
+     * @param whether to enable an optimization that do not shutdown the cluster for every test case.
      */
-    public boolean addServerConfig(VoltServerConfig config) {
+    public boolean addServerConfig(VoltServerConfig config, boolean optimization) {
 
         // near silent skip on k>0 and community edition
         if (!MiscUtils.isPro()) {
@@ -157,7 +162,7 @@ public class MultiConfigSuiteBuilder extends TestSuite {
             rs.setConfig(config);
             // The last test method for the current cluster configuration will need to
             // shutdown the cluster completely after finishing the test.
-            rs.m_completeShutdown = (i == methods.size() - 1);
+            rs.m_completeShutdown = (optimization == false || i == methods.size() - 1);
             super.addTest(rs);
         }
 

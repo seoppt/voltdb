@@ -125,12 +125,25 @@ public class RegressionSuite extends TestCase {
             int tableTypeColIdx = tableList.getColumnIndex("TABLE_TYPE");
             while (tableList.advanceRow()) {
                 String tableType = tableList.getString(tableTypeColIdx);
-                if (tableType.equalsIgnoreCase("TABLE")) {
+                // Add all the normal tables and views to the list.
+                // Try to delete all contents from them.
+                // Normal tables and views on streams can be cleared.
+                // Views on normal tables will hit errors, just ignore them.
+                if (! tableType.equalsIgnoreCase("EXPORT")) {
                     tableNames.add(tableList.getString(tableNameColIdx));
                 }
             }
             for (String tableName : tableNames) {
-                client.callProcedure("@AdHoc", "TRUNCATE TABLE " + tableName);
+                try {
+                    client.callProcedure("@AdHoc", "DELETE FROM " + tableName);
+                }
+                catch (ProcCallException pce) {
+                    String msg = pce.getMessage();
+                    Pattern pattern = Pattern.compile("Illegal to modify a materialized view.", Pattern.MULTILINE);
+                    if (! pattern.matcher(msg).find()) {
+                        throw pce;
+                    }
+                }
             }
         }
         for (final Client c : m_clients) {
