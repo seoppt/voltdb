@@ -141,6 +141,9 @@ public interface ProducerDRGateway {
      * Clear all queued DR buffers for a master, useful when the replica goes away
      */
     public void deactivateDRProducer();
+
+    public void deactivateDRProducer(byte clusterId);
+
     public void activateDRProducer();
 
     /**
@@ -166,6 +169,14 @@ public interface ProducerDRGateway {
     public boolean setDRProtocolVersion(int drVersion, boolean genStreamStart);
 
     /**
+     * Generate a <code>DR_STREAM_START</code>
+     * event for all partitions.
+     *
+     * @return Returns true if the operation was successful. False otherwise.
+     */
+    public boolean generateStreamStart();
+
+    /**
      * Use this to set up cursors in DR binary logs for clusters. This will initiate the process.
      * When the process is complete, the passed in handler will be notified of the status.
      *
@@ -183,4 +194,12 @@ public interface ProducerDRGateway {
      * @return The producer node stats keyed by cluster IDs or null if on error
      */
     public Map<Byte, DRProducerNodeStats> getNodeDRStats();
+
+    public void resumeReaders(byte clusterId);
+
+    public void pauseReaders(byte clusterId);
+
+    public void resumeAllReaders();
+
+    public void pauseAllReaders();
 }

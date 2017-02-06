@@ -19,6 +19,7 @@ package org.voltdb;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Objects;
 
 import org.voltdb.VoltTable.ColumnInfo;
 
@@ -64,6 +65,17 @@ public class DRConsumerStatsBase {
         protected Iterator<Object> getStatsRowKeyIterator(boolean interval) {
             return ImmutableSet.of().iterator();
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return Object.class.hashCode();
+        }
     }
 
     public static class DRConsumerPartitionStatsBase extends StatsSource {
@@ -88,6 +100,17 @@ public class DRConsumerStatsBase {
         @Override
         protected Iterator<Object> getStatsRowKeyIterator(boolean interval) {
             return ImmutableSet.of().iterator();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return Object.class.hashCode();
         }
     }
 

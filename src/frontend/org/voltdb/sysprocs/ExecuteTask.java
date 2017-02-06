@@ -35,6 +35,7 @@ import org.voltdb.VoltTable;
 import org.voltdb.VoltTable.ColumnInfo;
 import org.voltdb.VoltType;
 import org.voltdb.dtxn.DtxnConstants;
+import org.voltdb.jni.ExecutionEngine;
 import org.voltdb.jni.ExecutionEngine.TaskType;
 import org.voltdb.utils.VoltTableUtil;
 
@@ -108,6 +109,20 @@ public class ExecuteTask extends VoltSystemProcedure {
                     context.getSiteProcedureConnection().setDRProtocolVersion(drVersion, spHandle, uniqueId);
                 } else {
                     context.getSiteProcedureConnection().setDRProtocolVersion(drVersion);
+                }
+                break;
+            }
+            case GENERATE_DR_EVENT: {
+                result = new VoltTable(STATUS_SCHEMA);
+                int eventTypeId = buffer.getInt();
+                ExecutionEngine.EventType eventType = ExecutionEngine.EventType.values()[eventTypeId];
+                if (eventType.equals(ExecutionEngine.EventType.DR_STREAM_START)) {
+                    long uniqueId = m_runner.getUniqueId();
+                    long spHandle = m_runner.getTxnState().getNotice().getSpHandle();
+                    context.getSiteProcedureConnection().generateStreamStart(spHandle, uniqueId);
+                    result.addRow(STATUS_OK);
+                } else { // don't support other eventType
+                    result.addRow("FAILURE");
                 }
                 break;
             }

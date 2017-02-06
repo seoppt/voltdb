@@ -56,6 +56,7 @@ import org.voltdb.dtxn.SiteTracker;
 import org.voltdb.dtxn.TransactionState;
 import org.voltdb.dtxn.UndoAction;
 import org.voltdb.exceptions.EEException;
+import org.voltdb.jni.ExecutionEngine;
 import org.voltdb.settings.ClusterSettings;
 import org.voltdb.settings.NodeSettings;
 
@@ -284,6 +285,11 @@ public class MpRoSite implements Runnable, SiteProcedureConnection
 
         @Override
         public void resetDrAppliedTracker() {
+            throw new RuntimeException("RO MP Site doesn't do this, shouldn't be here.");
+        }
+
+        @Override
+        public void resetDrAppliedTracker(byte clusterId) {
             throw new RuntimeException("RO MP Site doesn't do this, shouldn't be here.");
         }
 
@@ -663,6 +669,11 @@ public class MpRoSite implements Runnable, SiteProcedureConnection
     @Override
     public void setDRProtocolVersion(int drVersion, long spHandle, long uniqueId)
     {
+        throw new RuntimeException("RO MP Site doesn't do this, shouldn't be here.");
+    }
+
+    @Override
+    public void generateStreamStart(long spHandle, long uniqueId) {
         throw new RuntimeException("RO MP Site doesn't do this, shouldn't be here.");
     }
 

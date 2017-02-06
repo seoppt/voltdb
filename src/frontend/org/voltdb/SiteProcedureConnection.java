@@ -27,6 +27,7 @@ import org.voltdb.dtxn.TransactionState;
 import org.voltdb.dtxn.UndoAction;
 import org.voltdb.exceptions.EEException;
 import org.voltdb.iv2.JoinProducerBase;
+import org.voltdb.jni.ExecutionEngine;
 
 /**
  * VoltProcedures invoke SiteProcedureConnection methods to
@@ -221,4 +222,6 @@ public interface SiteProcedureConnection {
      * binary log stream when we set protocol version.
      */
     public void setDRProtocolVersion(int drVersion, long spHandle, long uniqueId);
+
+    public void generateStreamStart(long spHandle, long uniqueId);
 }

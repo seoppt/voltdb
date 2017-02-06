@@ -544,6 +544,10 @@ public class Site implements Runnable, SiteProcedureConnection, SiteSnapshotConn
             m_lastLocalMpUniqueId = -1L;
         }
 
+        public void resetDrAppliedTracker(byte clusterId) {
+            m_maxSeenDrLogsBySrcPartition.remove((int) clusterId);
+        }
+
         @Override
         public void initDRAppliedTracker(Map<Byte, Integer> clusterIdToPartitionCountMap) {
             for (Map.Entry<Byte, Integer> entry : clusterIdToPartitionCountMap.entrySet()) {
@@ -1641,6 +1645,12 @@ public class Site implements Runnable, SiteProcedureConnection, SiteSnapshotConn
     @Override
     public void setDRProtocolVersion(int drVersion, long spHandle, long uniqueId) {
         setDRProtocolVersion(drVersion);
+        generateDREvent(
+                EventType.DR_STREAM_START, uniqueId, m_lastCommittedSpHandle, spHandle, new byte[0]);
+    }
+
+    @Override
+    public void generateStreamStart(long spHandle, long uniqueId) {
         generateDREvent(
                 EventType.DR_STREAM_START, uniqueId, m_lastCommittedSpHandle, spHandle, new byte[0]);
     }
