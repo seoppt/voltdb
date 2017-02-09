@@ -112,6 +112,10 @@ public class VoltZK {
     public static final String elasticJoinActiveBlocker = ZKUtil.joinZKPath(elasticJoinActiveBlockers, "join_blocker");
     public static final String request_truncation_snapshot_node = ZKUtil.joinZKPath(request_truncation_snapshot, "request_");
 
+    // root for rejoin nodes
+    public static final String rejoinNodesBlocker = "/db/rejoin_nodes_blocker";
+    public static final String rejoinNodesBlockerHost = ZKUtil.joinZKPath(rejoinNodesBlocker, "host_");
+
     // Persistent nodes (mostly directories) to create on startup
     public static final String[] ZK_HIERARCHY = {
             root,
@@ -126,6 +130,7 @@ public class VoltZK {
             leaders_globalservice,
             lastKnownLiveNodes,
             elasticJoinActiveBlockers,
+            rejoinNodesBlocker,
             request_truncation_snapshot
     };
 
@@ -235,6 +240,36 @@ public class VoltZK {
 
         zk.create(VoltZK.start_action_node + hostId, startActionBytes, Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL,
                 new ZKUtil.StringCallback(), null);
+    }
+
+    public static void createRejoinNodeIndicator(ZooKeeper zk, String node)
+    {
+        try {
+            zk.create(node,
+                    null,
+                    Ids.OPEN_ACL_UNSAFE,
+                    CreateMode.EPHEMERAL);
+        } catch (KeeperException e) {
+            if (e.code() != KeeperException.Code.NODEEXISTS) {
+                VoltDB.crashLocalVoltDB("Unable to create rejoin node Indicator", true, e);
+            }
+        } catch (InterruptedException e) {
+            VoltDB.crashLocalVoltDB("Unable to create rejoin node Indicator", true, e);
+        }
+    }
+
+    public static boolean removeRejoinNodeIndicator(ZooKeeper zk, String node)
+    {
+        try {
+            zk.delete(node, -1);
+        } catch (KeeperException e) {
+            if (e.code() != KeeperException.Code.NONODE) {
+                return false;
+            }
+        } catch (InterruptedException e) {
+            return false;
+        }
+        return true;
     }
 
     public static int getHostIDFromChildName(String childName) {
