@@ -601,6 +601,12 @@ public class ProcedureRunner {
         return m_site.getCorrespondingClusterId();
     }
 
+    private void updateCRC(QueuedSQL queuedSQL) {
+        if (!queuedSQL.stmt.isReadOnly) {
+            m_inputCRC.update(queuedSQL.stmt.sqlCRC);
+        }
+    }
+
     public void voltQueueSQL(final SQLStmt stmt, Expectation expectation, Object... args) {
         if (stmt == null) {
             throw new IllegalArgumentException("SQLStmt parameter to voltQueueSQL(..) was null.");
@@ -610,6 +616,7 @@ public class ProcedureRunner {
         queuedSQL.params = getCleanParams(stmt, true, args);
         queuedSQL.stmt = stmt;
 
+        updateCRC(queuedSQL);
         m_batch.add(queuedSQL);
     }
 
@@ -684,6 +691,7 @@ public class ProcedureRunner {
             }
             queuedSQL.params = getCleanParams(queuedSQL.stmt, false, argumentParams);
 
+            updateCRC(queuedSQL);
             m_batch.add(queuedSQL);
         }
         catch (Exception e) {
