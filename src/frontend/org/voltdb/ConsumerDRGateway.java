@@ -67,4 +67,6 @@ public interface ConsumerDRGateway extends Promotable {
     void stopConsumerDispatcher(byte clusterId);
 
     void addLocallyLedPartition(int partitionId);
+
+    boolean isSafeForReset(byte clusterId);
 }
