@@ -741,9 +741,11 @@ inline void TableTuple::copyForPersistentInsert(const voltdb::TableTuple &source
 #ifndef NDEBUG
     if( ! m_schema->isCompatibleForMemcpy(source.m_schema)) {
         std::ostringstream message;
-        message << "src  tuple: " << source.debug("") << std::endl;
-        message << "src schema: " << source.m_schema->debug() << std::endl;
-        message << "dest schema: " << m_schema->debug() << std::endl;
+        message << "copyForPersistentInsert column botch" << std::endl;
+        message << "  src  tuple: " << source.debug("") << std::endl;
+        message << "  src schema: " << source.m_schema->debug() << std::endl;
+        message << "  dest schema: " << m_schema->debug() << std::endl;
+        PRINT_STACK_TRACE();
         throwFatalException( "%s", message.str().c_str());
     }
 #endif
@@ -858,9 +860,11 @@ inline void TableTuple::copy(const TableTuple &source) {
 #ifndef NDEBUG
     if( ! m_schema->isCompatibleForMemcpy(source.m_schema)) {
         std::ostringstream message;
-        message << "src  tuple: " << source.debug("") << std::endl;
-        message << "src schema: " << source.m_schema->debug() << std::endl;
-        message << "dest schema: " << m_schema->debug() << std::endl;
+        message << "TableTuple::copy column botch:" << std::endl;
+        message << "  src  tuple: " << source.debug("") << std::endl;
+        message << "  src schema: " << source.m_schema->debug() << std::endl;
+        message << "  dest schema: " << m_schema->debug() << std::endl;
+        PRINT_STACK_TRACE();
         throwFatalException("%s", message.str().c_str());
     }
 #endif

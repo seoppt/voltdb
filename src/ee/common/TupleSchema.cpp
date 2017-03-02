@@ -369,6 +369,11 @@ bool TupleSchema::isCompatibleForMemcpy(const TupleSchema *other) const
         other->m_hiddenColumnCount != m_hiddenColumnCount ||
         other->m_uninlinedObjectColumnCount != m_uninlinedObjectColumnCount ||
         other->tupleLength() != tupleLength()) {
+        std::cout << "Column counts differ:" << std::endl
+                  << "  m_column_count: other->" << other->m_columnCount << " vs. " << m_columnCount << std::endl
+                  << "  m_hiddenColumn_count: other->" << other->m_hiddenColumnCount << " vs. " << m_hiddenColumnCount << std::endl
+                  << "  m_uninlinedObjectColumn_count: other->" << other->m_uninlinedObjectColumnCount << " vs. " << m_uninlinedObjectColumnCount << std::endl
+                  << "  tupleLength(): other->" << other->tupleLength() << " vs. " << tupleLength() << std::endl;
         return false;
     }
 
@@ -378,6 +383,10 @@ bool TupleSchema::isCompatibleForMemcpy(const TupleSchema *other) const
         if (columnInfo->offset != ocolumnInfo->offset ||
                 columnInfo->type != ocolumnInfo->type ||
                 columnInfo->inlined != ocolumnInfo->inlined) {
+            std::cout << "Column " << ii << " is not compatible for memcpy" << std::endl
+                      << "  offset: columnInfo->" << columnInfo->offset << " vs. ocolumnInfo->" << ocolumnInfo->offset << std::endl
+                      << "  type: columnInfo->" << static_cast<int>(columnInfo->type) << " vs. ocolumnInfo->" << static_cast<int>(ocolumnInfo->type) << std::endl
+                      << "  inlined: columnInfo->" << columnInfo->inlined << " vs. ocolumnInfo->" << ocolumnInfo->inlined << std::endl;
             return false;
         }
     }
