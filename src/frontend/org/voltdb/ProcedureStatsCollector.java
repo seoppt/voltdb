@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 
 import org.voltcore.logging.VoltLogger;
 import org.voltdb.catalog.Procedure;
+import org.voltdb.dtxn.TransactionState;
 
 /**
  * Derivation of StatsSource to expose timing information of procedure invocations.
@@ -185,7 +186,7 @@ class ProcedureStatsCollector extends SiteStatsSource {
             boolean aborted,
             boolean failed,
             VoltTable[] results,
-            ParameterSet parameterSet) {
+            TransactionState txnState) {
         if (m_procStat.m_currentStartTime > 0) {
             // This is a sampled invocation.
             // Update timings and size statistics.
@@ -223,8 +224,10 @@ class ProcedureStatsCollector extends SiteStatsSource {
                 m_procStat.m_maxResultSize = Math.max(resultSize, m_procStat.m_maxResultSize);
                 m_procStat.m_lastMinResultSize = Math.min(resultSize, m_procStat.m_lastMinResultSize);
                 m_procStat.m_lastMaxResultSize = Math.max(resultSize, m_procStat.m_lastMaxResultSize);
+                StoredProcedureInvocation invoc = (txnState != null ? txnState.getInvocation() : null);
+                ParameterSet paramSet = (invoc != null ? invoc.getParams() : null);
                 int parameterSetSize = (
-                        parameterSet != null ? parameterSet.getSerializedSize() : 0);
+                        paramSet != null ? paramSet.getSerializedSize() : 0);
                 m_procStat.m_totalParameterSetSize += parameterSetSize;
                 m_procStat.m_minParameterSetSize = Math.min(parameterSetSize, m_procStat.m_minParameterSetSize);
                 m_procStat.m_maxParameterSetSize = Math.max(parameterSetSize, m_procStat.m_maxParameterSetSize);
