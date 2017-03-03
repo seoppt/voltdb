@@ -408,6 +408,7 @@ public abstract class AbstractScanPlanNode extends AbstractPlanNode {
                 TupleValueExpression tve = (TupleValueExpression) colExpr;
                 tve.setColumnIndexUsingSchema(m_tableSchema);
             }
+            // This is wrong.
             m_outputSchema.sortByTveIndex();
         }
 
