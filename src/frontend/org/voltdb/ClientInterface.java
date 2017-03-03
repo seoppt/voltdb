@@ -127,7 +127,7 @@ public class ClientInterface implements SnapshotDaemon.DaemonInitiator {
     public static final long SNAPSHOT_UTIL_CID          = Long.MIN_VALUE + 2;
     public static final long ELASTIC_JOIN_CID           = Long.MIN_VALUE + 3;
     // public static final long UNUSED_CID (was DR)     = Long.MIN_VALUE + 4;
-    public static final long INTERNAL_CID               = Long.MIN_VALUE + 5;
+    // public static final long UNUSED_CID              = Long.MIN_VALUE + 5;
     public static final long EXECUTE_TASK_CID           = Long.MIN_VALUE + 6;
     public static final long DR_DISPATCHER_CID          = Long.MIN_VALUE + 7;
     public static final long RESTORE_SCHEMAS_CID        = Long.MIN_VALUE + 8;
@@ -140,6 +140,7 @@ public class ClientInterface implements SnapshotDaemon.DaemonInitiator {
     public static final long DR_REPLICATION_SNAPSHOT_BASE_CID  = Long.MIN_VALUE + setBaseValue(2);
     public static final long DR_REPLICATION_NORMAL_BASE_CID    = Long.MIN_VALUE + setBaseValue(3);
     public static final long DR_REPLICATION_MP_BASE_CID        = Long.MIN_VALUE + setBaseValue(4);
+    public static final long INTERNAL_CID                      = Long.MIN_VALUE + setBaseValue(5);
 
     private static final VoltLogger log = new VoltLogger(ClientInterface.class.getName());
     private static final VoltLogger authLog = new VoltLogger("AUTH");
@@ -1145,9 +1146,13 @@ public class ClientInterface implements SnapshotDaemon.DaemonInitiator {
                 .siteId(m_siteId)
                 .build();
 
-        InternalClientResponseAdapter internalAdapter = new InternalClientResponseAdapter(INTERNAL_CID);
-        ClientInterfaceHandleManager ichm = bindAdapter(internalAdapter, null, true);
-        m_internalConnectionHandler = new InternalConnectionHandler(internalAdapter, ichm);
+        Map<Integer, InternalClientResponseAdapter> internalAdapters = new HashMap<>();
+        for (int pid : m_cartographer.getPartitions()) {
+            InternalClientResponseAdapter internalAdapter = new InternalClientResponseAdapter(INTERNAL_CID + pid);
+            bindAdapter(internalAdapter, null, true);
+            internalAdapters.put(pid, internalAdapter);
+        }
+        m_internalConnectionHandler = new InternalConnectionHandler(internalAdapters);
 
         m_executeTaskAdpater = new SimpleClientResponseAdapter(ClientInterface.EXECUTE_TASK_CID, "ExecuteTaskAdapter", true);
         bindAdapter(m_executeTaskAdpater, null);
